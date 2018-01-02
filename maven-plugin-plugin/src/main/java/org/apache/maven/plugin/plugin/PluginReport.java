@@ -190,7 +190,7 @@ public class PluginReport
      */
     @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     protected ArtifactRepository local;
-    
+
     /**
      * @since 3.5.1
      */
@@ -200,6 +200,7 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -208,6 +209,7 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getOutputDirectory()
     {
         // PLUGIN-191: output directory of plugin.html, not *-mojo.xml
@@ -217,6 +219,7 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected MavenProject getProject()
     {
         return project;
@@ -225,14 +228,17 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canGenerateReport()
     {
-        return "maven-plugin".equals( project.getPackaging() );
+        return "maven-plugin".equals( project.getPackaging() )
+                || "takari-maven-plugin".equals( project.getPackaging() );
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -261,7 +267,7 @@ public class PluginReport
         throws MavenReportException
     {
         PluginDescriptorBuilder builder = getPluginDescriptorBuilder();
-        
+
         try
         {
             return builder.build( new FileReader( new File( project.getBuild().getOutputDirectory(),
@@ -331,10 +337,10 @@ public class PluginReport
     }
 
     /**
-     * Return the pluginDescriptorBuilder to use based on the Maven version: either use the original from the 
-     * maven-plugin-api or a patched version for Maven versions before the MNG-6109 fix 
+     * Return the pluginDescriptorBuilder to use based on the Maven version: either use the original from the
+     * maven-plugin-api or a patched version for Maven versions before the MNG-6109 fix
      * (because of Maven MNG-6109 bug that won't give accurate 'since' info when reading plugin.xml).
-     * 
+     *
      * @return the proper pluginDescriptorBuilder
      * @see https://issues.apache.org/jira/browse/MNG-6109
      * @see https://issues.apache.org/jira/browse/MPLUGIN-319
@@ -358,13 +364,14 @@ public class PluginReport
         {
             return new MNG6109PluginDescriptorBuilder();
         }
-        
+
         return pluginDescriptorBuilder;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.plugin.description" );
@@ -373,6 +380,7 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.plugin.name" );
@@ -381,6 +389,7 @@ public class PluginReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getOutputName()
     {
         return "plugin-info";
@@ -460,6 +469,7 @@ public class PluginReport
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getTitle()
         {
             return getBundle( locale ).getString( "report.plugin.title" );
@@ -468,6 +478,7 @@ public class PluginReport
         /**
          * {@inheritDoc}
          */
+        @Override
         @SuppressWarnings( { "unchecked", "rawtypes" } )
         public void renderBody()
         {
